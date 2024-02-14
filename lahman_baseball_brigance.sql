@@ -2,19 +2,24 @@
 -- - this data has been made available [online](http://www.seanlahman.com/baseball-archive/statistics/) by Sean Lahman
 -- - you can find a data dictionary [here](http://www.seanlahman.com/files/database/readme2016.txt)
 
--- 1. Find all players in the database who played at Vanderbilt University. Create a list showing each player's first and last names as well as the total salary they earned in the major leagues. Sort this list in descending order by the total salary earned. Which Vanderbilt player earned the most money in the majors?
-
---FROM collegeplaying AS c, SELECT playerid, schoolid
---FROM schools AS sc, SELECT schoolid, schoolname
-WHERE schoolname = 'Vanderbilt University'
-schoolid = 'Vandy'
+-- ✅1. Find all players in the database who played at Vanderbilt University. Create a list showing each player's first and last names as well as the total salary they earned in the major leagues. Sort this list in descending order by the total salary earned. Which Vanderbilt player earned the most money in the majors?
 
 SELECT pe.namefirst, pe.namelast, SUM (sa.salary) AS total_salary
-FROM people AS pe
+FROM collegeplaying AS c
+INNER JOIN schools AS sc
+USING (schoolid) 
+INNER JOIN people AS pe
+USING (playerid)
 INNER JOIN salaries AS sa
 USING (playerid)
+WHERE schoolid IN (
+	SELECT schoolid
+	FROM schools
+	WHERE schoolname='Vanderbilt University')
 GROUP BY 1, 2
 ORDER BY total_salary DESC;
+
+	--📃David Price	from Vanderbilt had career earning of $245,553,888
 
 -- 2. Using the fielding table, group players into three groups based on their position: label players with position OF as "Outfield", those with position "SS", "1B", "2B", and "3B" as "Infield", and those with position "P" or "C" as "Battery". Determine the number of putouts made by each of these three groups in 2016.
 
